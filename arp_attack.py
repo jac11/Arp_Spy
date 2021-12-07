@@ -136,16 +136,19 @@ class Spoofing_arp:
               exit()
           except KeyboardInterrupt :
                     os.system("echo 0 > /proc/sys/net/ipv4/ip_forward")
-                    eth_hdr_Fix   = struct.pack("!6s6sH",dest_mac,self.geteway_mac,protocol)
-                    eth_hdr2_Fix    = struct.pack("!6s6sH",self.geteway_mac,dest_mac,protocol)
-                    arp_target = struct.pack("!HHBBH6s4s6s4s",htype,ptype,hlen,plen,opcode_2,dest_mac,des_ip,self.geteway_mac,self.RouterIpConvert)
-                    arp_router = struct.pack("!HHBBH6s4s6s4s",htype,ptype,hlen,plen,opcode_2,self.geteway_mac,self.RouterIpConvert,dest_mac,des_ip)
+                    eth_hdr_Fix   = struct.pack("!6s6sH",dest_mac,self.source_mac,protocol)
+                    eth_hdr2_Fix  = struct.pack("!6s6sH",self.geteway_mac,self.source_mac,protocol)
+                    arp_target    = struct.pack("!HHBBH6s4s6s4s",htype,ptype,hlen,plen,opcode_2,self.geteway_mac,self.RouterIpConvert,dest_mac,des_ip)
+                    arp_router    = struct.pack("!HHBBH6s4s6s4s",htype,ptype,hlen,plen,opcode_2,dest_mac,des_ip,self.geteway_mac,self.RouterIpConvert)
                     Packet_target = eth_hdr_Fix +arp_target 
                     Packet_router = eth_hdr2_Fix +arp_router
                     send_packet_to_Target   = SocketConnect.send(Packet_target)    
                     send_packet_to_router   = SocketConnect.send(Packet_router) 
                     print("\rHosueKeeping Cleanup Process ......")
                     print("*"*40)
+                    time.sleep(0.30)
+                    print("[*] Total Packet send is ....|- "+ str(count))
+                    time.sleep(1)
                     print("[*] IP Forward set to default value 0")
                     time.sleep(1)
                     print("[*] arp Table set to Normal ...")
@@ -174,4 +177,3 @@ class Spoofing_arp:
               exit()  
 if __name__=='__main__':
      Spoofing_arp()
-
