@@ -140,6 +140,7 @@ class Spoofing_arp:
                     Packet_router = eth_hdr2_Fix +arp_router
                     send_packet_to_Target   = SocketConnect.send(Packet_target)    
                     send_packet_to_router   = SocketConnect.send(Packet_router) 
+
                     print("\rHosueKeeping Cleanup Process ......")
                     print("*"*40)
                     time.sleep(0.30)

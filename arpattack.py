@@ -41,7 +41,7 @@ class Controll :
                call_termminal = subprocess.call(command_proc,shell=True,stderr=subprocess.PIPE)   
                 
                if self.args.Wireshark :
-                  self.CommandWireShark= "wireshark  -i "+self.args.Interface+" -k -w home.pcapng 2>/dev/null" 
+                  self.CommandWireShark= "wireshark  -i "+self.args.Interface+" -k "+"-Y ip.addr=="+self.args.Target + " -w "+"-"+self.args.Target+" "+"2>/dev/null" 
                   os.system(self.CommandWireShark)
         def arg_pares_on(self):
             parser = argparse.ArgumentParser( description="Usage: <OPtion> <arguments> ")          
