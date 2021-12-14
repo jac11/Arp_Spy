@@ -14,14 +14,19 @@ class Controll :
             self.arg_pares_on()
             self.start()
         def start(self): 
-               if len(self.args.dest) == 17 and ":" in self.args.dest:
+               if len(self.args.dest) == 17 and ":" in self.args.dest  and not self.args.Wireshark and 'true' not in sys.argv  or\
+               len(self.args.dest) == 17 and ":" in self.args.dest and  self.args.Wireshark and 'true' in sys.argv :
                      pass       
                else:
                      print('\n'+"*"*22)
                      print("[*] Attck Status\n"+'*'*22)
                      time.sleep(0.30)
-                     print("[*] Error   -----------------|->  MAC-address Error " )
-                     exit()
+                     if 'true' in sys.argv : 
+                        print("[*] Error   -----------------|->  MAC-address Error " )
+                        exit()
+                     else:
+                         print("[*] Error   -----------------|->  wireshark args not set to true " )
+                         exit()
                with open ('/proc/net/arp','r') as geteway :
                     router= geteway.readlines()
                     router = str("".join(router)).replace('\n',' ')
@@ -41,7 +46,7 @@ class Controll :
                command_proc = 'gnome-terminal  -e ' +'"'+' ./Packagearp/arp_attack.py ' + args +'"'                  
                call_termminal = subprocess.call(command_proc,shell=True,stderr=subprocess.PIPE)   
                 
-               if self.args.Wireshark :
+               if self.args.Wireshark and 'true' in sys.argv :
 
                   if not os.path.exists("./capture"):
                      os.mkdir("./capture")
