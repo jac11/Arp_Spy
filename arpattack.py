@@ -53,7 +53,7 @@ class Controll :
                   if os.path.exists("./capture/"+self.args.Target):
                      os.remove("./capture/"+self.args.Target)
                   os.chown("./capture",0, 0)
-                  self.CommandWireShark= "wireshark -i "+self.args.Interface+" -k "+"-Y ip.addr=="+self.args.Target+ " -S -N 'mnNdtv'  -w ./capture/"+self.args.Target+"  2>/dev/null" 
+                  self.CommandWireShark= "wireshark -i "+self.args.Interface+" -k "+"-Y ip.dst=="+self.args.Target+ " -S -N 'mnNdtv'  -w ./capture/"+self.args.Target+"  2>/dev/null" 
                   os.system(self.CommandWireShark)
                   os.system("./capture/"+self.CommandWireShark)
                   id_user =  os.stat("./arpattack.py").st_uid
