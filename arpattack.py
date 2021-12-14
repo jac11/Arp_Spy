@@ -6,6 +6,7 @@ import subprocess
 import sys
 import os
 import time 
+
 from subprocess import Popen, PIPE, check_output 
 class Controll :
 
@@ -37,12 +38,22 @@ class Controll :
                     args = '-I '+self.args.Interface+' -T '+ self.args.Target +' -M ' +self.args.dest +' -R '+ self.args.repate+' '
                else:
                     args = "-I "+self.args.Interface+" -T "+ self.args.Target +" -M " +self.args.dest 
-               command_proc = 'gnome-terminal  -e ' +'"'+' ./arp_attack.py ' + args +'"'                  
+               command_proc = 'gnome-terminal  -e ' +'"'+' ./Packagearp/arp_attack.py ' + args +'"'                  
                call_termminal = subprocess.call(command_proc,shell=True,stderr=subprocess.PIPE)   
                 
                if self.args.Wireshark :
-                  self.CommandWireShark= "wireshark  -i "+self.args.Interface+" -k "+"-Y ip.addr=="+self.args.Target + " -w "+"-"+self.args.Target+" "+"2>/dev/null" 
+
+                  if not os.path.exists("./capture"):
+                     os.mkdir("./capture")
+                  if os.path.exists("./capture/"+self.args.Target):
+                     os.remove("./capture/"+self.args.Target)
+                  os.chown("./capture",0, 0)
+                  self.CommandWireShark= "wireshark -i "+self.args.Interface+" -k "+"-Y ip.addr=="+self.args.Target+ " -S -N 'mnNdtv'  -w ./capture/"+self.args.Target+"  2>/dev/null" 
                   os.system(self.CommandWireShark)
+                  os.system("./capture/"+self.CommandWireShark)
+                  id_user =  os.stat("./arpattack.py").st_uid
+                  os.chown("./capture", id_user, id_user)
+                  os.chown("./capture/"+self.args.Target, id_user, id_user)
         def arg_pares_on(self):
             parser = argparse.ArgumentParser( description="Usage: <OPtion> <arguments> ")          
             parser.add_argument( '-I',"--Interface"  ,dest = "Interface" ,required=True   , action=None )

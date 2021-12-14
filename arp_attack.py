@@ -6,7 +6,7 @@ import struct
 import binascii
 import time
 import argparse
-import os
+import os,signal
 import sys
 import re
 import subprocess
@@ -113,7 +113,7 @@ class Spoofing_arp:
               sys.stdout.write('\x1b[2K')
               
               while True :
-                   print ("[*] Packet Send number >> ",count)
+                   print ("[*] arp Packet Send  >> ",count)
                    sys.stdout.write('\x1b[1A')
                    sys.stdout.write('\x1b[2K')
                    send_packet_to_Target   = SocketConnect.send(Packet_target)    
@@ -140,7 +140,7 @@ class Spoofing_arp:
                     Packet_router = eth_hdr2_Fix +arp_router
                     send_packet_to_Target   = SocketConnect.send(Packet_target)    
                     send_packet_to_router   = SocketConnect.send(Packet_router) 
-
+                                            
                     print("\rHosueKeeping Cleanup Process ......")
                     print("*"*40)
                     time.sleep(0.30)
@@ -150,6 +150,15 @@ class Spoofing_arp:
                     time.sleep(1)
                     print("[*] arp Table set to Normal ...")
                     time.sleep(1)
+                   
+                    for ID_Number in os.popen("ps ax | grep wireshark | grep -v grep"):   
+                        if "wireshark" in  ID_Number :                 
+                            ProcessID = ID_Number.split()
+                            ProcessID = ProcessID[0]
+                            os.kill(int(ProcessID), signal.SIGKILL)
+                            print("[*] closeing wireshark ...")
+                            time.sleep(1)
+                            print("[*] PCAPNG Packet Capture saved at  Capture folder ...")
                     counted = 6 
                     for i in range(int(counted)) :
                         counted -=1
