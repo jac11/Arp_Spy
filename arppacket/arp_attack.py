@@ -111,7 +111,7 @@ class Spoofing_arp:
               print ("[*] Packet Send number >> ",count)
               sys.stdout.write('\x1b[1A')
               sys.stdout.write('\x1b[2K')
-              
+              count = 1
               while True :
                    print ("[*] arp Packet Send  >> ",count)
                    sys.stdout.write('\x1b[1A')
