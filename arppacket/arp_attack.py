@@ -181,7 +181,7 @@ class Spoofing_arp:
                     time.sleep(1)
                     def mac_return():
                         ifconfig_down = "sudo ifconfig "+self.args.Interface+" down"
-                        ifconfig_mac_change = "sudo ifconfig "+self.args.Interface+ " hw ether "+self.Mac_Interface
+                        ifconfig_mac_change = "sudo ifconfig "+self.args.Interface+ " hw ether "+self.Current_Mac_G 
                         ifconfig_up = "sudo ifconfig "+self.args.Interface+" up"
                         os.system(ifconfig_down)
                         os.system(ifconfig_mac_change)
