@@ -53,22 +53,23 @@ class Controll :
                   if os.path.exists("./capture/"+self.args.Target+"/"+self.args.Target):
                      os.remove("./capture/"+self.args.Target+"/"+self.args.Target)
                   os.chown("./capture/"+self.args.Target+"/",0, 0)
-                  filtter = "tcp[13]==2 "
-                  self.CommandWireShark= "wireshark -i "+self.args.Interface+" -k  -Y "+filtter+\
-                  " -N 'mnNdtv' -w ./capture/"+self.args.Target+"/"+self.args.Target+" 2>/dev/null" 
+                  filter_0 = "tcp[13]==2 "
+                  self.CommandWireShark= "wireshark -i "+self.args.Interface+" -k  -Y "+filter_0+\
+                  " -N 'mnNdtv'  -w ./capture/"+self.args.Target+"/"+self.args.Target+" 2>/dev/null" 
                   os.system(self.CommandWireShark)
                   id_user =  os.stat("./arpattack.py").st_uid
                   os.chown("./capture/"+self.args.Target, id_user, id_user)
                   os.chown("./capture/"+self.args.Target+"/"+self.args.Target, id_user, id_user)
-                  try:
-                     commant2 =" tshark -X lua_script:"+"1"+" -r "+"./capture/"+self.args.Target+"/"+self.args.Target+\
-                     " -V -T text > "+"./capture/"+self.args.Target+"/"+self.args.Target+".txt 2>/dev/null"
-                  except FileNotFoundError :
-                     try:
-                       os.system(commant2)
-                       os.chown("./capture/"+self.args.Target+"/"+self.args.Target+".txt", id_user, id_user)
-                     except :
-                        pass
+                  #try:
+                  commant2 =" tshark -X lua_script:"+"1"+" -r "+"./capture/"+self.args.Target+"/"+self.args.Target+\
+                  " -N n  -V -T text > "+"./capture/"+self.args.Target+"/"+self.args.Target+".txt 2>/dev/null"
+                  os.system(commant2)
+                 # except FileNotFoundError :
+                     #try:
+                  os.system(commant2)
+                  os.chown("./capture/"+self.args.Target+"/"+self.args.Target+".txt", id_user, id_user)
+                    # except :
+                     #   pass
         def arg_pares_on(self):
             parser = argparse.ArgumentParser( description="Usage: <OPtion> <arguments> ")          
             parser.add_argument( '-I',"--Interface"  ,dest = "Interface" ,required=True   , action=None )
