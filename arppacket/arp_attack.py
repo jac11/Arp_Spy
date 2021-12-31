@@ -205,15 +205,24 @@ class Spoofing_arp:
                           read_file = output.readlines()
                     list =[]
                     for line in read_file :
-                        if "Server Name:" in line  :
+                        if "Server Name:" in line  or "www." in line\
+                        or  "Name:" in line :
                             list.append(line)
                             list_all=set(list)
-                    roming = str("".join(list_all)).replace("Server Name:",'').replace("                     ","[+] ")
-                    with open("./capture/"+self.args.Target+"/roaming.txt",'w') as ip_1:
-                         ip_1.write(roming )
-                    id_user =  os.stat("./capture/"+self.args.Target+"/"+self.args.Target+".txt").st_uid 
-                    os.chown("./capture/"+self.args.Target+"/roaming.txt", id_user, id_user)
-                    print("[*] Website Name Vaist Saved at ./capture/"+self.args.Target+"/roaming.txt ")
+                            roming = str("".join(list_all)).replace("Server Name:",'').replace("                     ","[+] ")
+                            with open("./capture/"+self.args.Target+"/roaming.txt",'w') as ip_1:
+                                ip_1.write(roming )
+                            id_user =  os.stat("./capture/"+self.args.Target+"/"+self.args.Target+".txt").st_uid 
+                            os.chown("./capture/"+self.args.Target+"/roaming.txt", id_user, id_user)
+                            print("[*] Website Name Vaist Saved at ./capture/"+self.args.Target+"/roaming.txt ")
+                            break
+                        else:
+                              with open("./capture/"+self.args.Target+"/roaming.txt",'w') as ip_1:
+                                  ip_1.write("No Website is Capture" )
+                              id_user =  os.stat("./capture/"+self.args.Target+"/"+self.args.Target+".txt").st_uid 
+                              os.chown("./capture/"+self.args.Target+"/roaming.txt", id_user, id_user)
+                              print("[*] Website Name Vaist Saved at ./capture/"+self.args.Target+"/roaming.txt ")     
+                              break
                     for i in range(int(counted)) :
                         counted -=1
                         print("[*] Exit attack Start DownCount >> "+str(counted))
