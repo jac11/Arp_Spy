@@ -45,19 +45,21 @@ class Controll :
                     args = "-I "+self.args.Interface+" -T "+ self.args.Target +" -M " +self.args.dest 
                command_proc = ' gnome-terminal  -e ' +'"'+'./arppacket/arp_attack.py ' + args +'"'                  
                call_termminal = subprocess.call(command_proc,shell=True,stderr=subprocess.PIPE)   
-                
+               id_user =  os.stat("./arpattack.py").st_uid 
                if self.args.Wireshark and 'true' in sys.argv :
                   time.sleep(5)
                   if not os.path.exists("./capture/"+self.args.Target):
                      os.mkdir("./capture/"+self.args.Target)
                   if os.path.exists("./capture/"+self.args.Target+"/"+self.args.Target):
                      os.remove("./capture/"+self.args.Target+"/"+self.args.Target)
-                  os.chown("./capture/"+self.args.Target+"/",0, 0)
+                  try:    
+                     os.chown("./capture/"+self.args.Target+"/",0, 0)
+                  except PermissionError :
+                           os.chown("./capture/"+self.args.Target+"/",id_user,id_user)
                   filter_0 = "tcp[13]==2 "
                   self.CommandWireShark= "wireshark -i "+self.args.Interface+" -k  -Y "+filter_0+\
                   " -N 'mnNdtv'  -w ./capture/"+self.args.Target+"/"+self.args.Target+" 2>/dev/null" 
-                  os.system(self.CommandWireShark)
-                  id_user =  os.stat("./arpattack.py").st_uid
+                  os.system(self.CommandWireShark)                 
                   os.chown("./capture/"+self.args.Target, id_user, id_user)
                   os.chown("./capture/"+self.args.Target+"/"+self.args.Target, id_user, id_user)
                   #try:
