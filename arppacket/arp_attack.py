@@ -195,9 +195,9 @@ class Spoofing_arp:
                             ProcessID = ID_Number.split()
                             ProcessID = ProcessID[0]
                             os.kill(int(ProcessID), signal.SIGKILL)
-                            print("[*] closeing wireshark ...")
-                            time.sleep(1)
-                            print("[*] PCAPNG Packet Capture saved at  Capture folder ...")
+                    print("[*] closeing wireshark ...")
+                    time.sleep(1)
+                    print("[*] PCAPNG Packet Capture saved at  Capture folder ...")
                     counted = 6 
                     if os.path.exists("./capture/"+self.args.Target+"/roaming.txt"):
                        os.remove("./capture/"+self.args.Target+"/roaming.txt")
