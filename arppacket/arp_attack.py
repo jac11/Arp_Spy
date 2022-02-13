@@ -19,6 +19,7 @@ class Spoofing_arp:
       def __init__(self):
 
            self.arg_parse()
+           self.get_geteway()
            self.mac_change()
            command = "ip -s -s neigh flush all  > output "
            subprocess.call(command,shell=True,stderr=subprocess.PIPE)  
@@ -27,7 +28,7 @@ class Spoofing_arp:
            subprocess.call(command,shell=True,stderr=subprocess.PIPE)  
            os.remove("output") 
            time.sleep(1)          
-           self.get_geteway()
+           
            self.Host_info()
            self.arpSpoofing()
           
@@ -195,9 +196,9 @@ class Spoofing_arp:
                             ProcessID = ID_Number.split()
                             ProcessID = ProcessID[0]
                             os.kill(int(ProcessID), signal.SIGKILL)
-                    print("[*] closeing wireshark ...")
-                    time.sleep(1)
-                    print("[*] PCAPNG Packet Capture saved at  Capture folder ...")
+                            print("[*] closeing wireshark ...")
+                            time.sleep(1)
+                            print("[*] PCAPNG Packet Capture saved at  Capture folder ...")
                     counted = 6 
                     if os.path.exists("./capture/"+self.args.Target+"/roaming.txt"):
                        os.remove("./capture/"+self.args.Target+"/roaming.txt")
@@ -221,7 +222,15 @@ class Spoofing_arp:
                            id_user =  os.stat("./capture/"+self.args.Target+"/"+self.args.Target+".txt").st_uid 
                            os.chown("./capture/"+self.args.Target+"/roaming.txt", id_user, id_user)
                            print("[*] Website Name Vaist Saved at ./capture/"+self.args.Target+"/roaming.txt ")     
-
+                    try:        
+                       from image import ImagesDownLoad
+                       run = ImagesDownLoad()
+                       user = os.path.dirname(os.path.abspath(__file__)).split ("/")[2]
+                       group = "chown "+ user+ ":"+user +" *"
+                       os.system(group)
+                    except Exception  as e : 
+                      print ("[+] Error With Images Capture ....!" ,e)  
+                        
                     for i in range(int(counted)) :
                         counted -=1
                         print("[*] Exit attack Start DownCount >> "+str(counted))
