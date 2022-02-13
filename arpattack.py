@@ -6,6 +6,7 @@ import subprocess
 import sys
 import os
 import time 
+import glob
 
 from subprocess import Popen, PIPE, check_output 
 class Controll :
@@ -49,11 +50,17 @@ class Controll :
                if self.args.Wireshark and 'true' in sys.argv :
                   time.sleep(5)
                   if not os.path.exists("./capture/"+self.args.Target):
-                     os.mkdir("./capture/"+self.args.Target)
+                     os.makedirs("./capture/"+self.args.Target+"/Images/")
                   if os.path.exists("./capture/"+self.args.Target+"/"+self.args.Target):
                      os.remove("./capture/"+self.args.Target+"/"+self.args.Target)
+                  if os.path.exists("./capture/"+self.args.Target+"/Images/") :
+                     Images_folder = "./capture/"+self.args.Target+"/Images/"
+                     remove_Images_folder = "rm -rf "+ Images_folder
+                     os.system(remove_Images_folder)
+                     os.mkdir("./capture/"+self.args.Target+"/Images/")                              
                   try:    
                      os.chown("./capture/"+self.args.Target+"/",0, 0)
+                    
                   except PermissionError :
                            os.chown("./capture/"+self.args.Target+"/",id_user,id_user)
                   filter_0 = "tcp[13]==2 "
@@ -62,10 +69,12 @@ class Controll :
                   os.system(self.CommandWireShark)                 
                   os.chown("./capture/"+self.args.Target, id_user, id_user)
                   os.chown("./capture/"+self.args.Target+"/"+self.args.Target, id_user, id_user)
+                  os.chown("./capture/"+self.args.Target+"/"+"Images/", id_user, id_user)
                   #try:
                   commant2 =" tshark -X lua_script:"+"1"+" -r "+"./capture/"+self.args.Target+"/"+self.args.Target+\
                   " -N n  -V -T text > "+"./capture/"+self.args.Target+"/"+self.args.Target+".txt 2>/dev/null"
                   os.system(commant2)
+                               
                  # except FileNotFoundError :
                      #try:
                   os.system(commant2)
