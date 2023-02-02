@@ -15,19 +15,16 @@ class Controll :
             self.arg_pares_on()
             self.start()
         def start(self): 
-               if len(self.args.dest) == 17 and ":" in self.args.dest  and not self.args.Wireshark and 'true' not in sys.argv  or\
-               len(self.args.dest) == 17 and ":" in self.args.dest and  self.args.Wireshark and 'true' in sys.argv :
+               if len(self.args.dest) == 17 and ":" in self.args.dest  and not self.args.Wireshark or\
+               len(self.args.dest) == 17 and ":" in self.args.dest and  self.args.Wireshark  :
                      pass       
                else:
                      print('\n'+"*"*22)
                      print("[*] Attck Status\n"+'*'*22)
                      time.sleep(0.30)
-                     if 'true' in sys.argv : 
-                        print("[*] Error   -----------------|->  MAC-address Error " )
-                        exit()
-                     else:
-                         print("[*] Error   -----------------|->  wireshark args not set to true " )
-                         exit()
+                     print("[*] Error   -----------------|->  MAC-address Error " )
+                     exit()
+              
                with open ('/proc/net/arp','r') as geteway :
                     router= geteway.readlines()
                     router = str("".join(router)).replace('\n',' ')
@@ -47,7 +44,7 @@ class Controll :
                command_proc = ' gnome-terminal  -e ' +'"'+'./arppacket/arp_attack.py ' + args +'"'                  
                call_termminal = subprocess.call(command_proc,shell=True,stderr=subprocess.PIPE)   
                id_user =  os.stat("./arpattack.py").st_uid 
-               if self.args.Wireshark and 'true' in sys.argv :
+               if self.args.Wireshark  :
                   time.sleep(5)
                   if not os.path.exists("./capture/"+self.args.Target):
                      os.makedirs("./capture/"+self.args.Target+"/Images/")
@@ -87,7 +84,7 @@ class Controll :
             parser.add_argument( '-M',"--dest"       ,dest = "dest"      ,required=True   , action=None )
             parser.add_argument( '-T',"--Target"     ,dest = "Target"    ,required=True   , action=None )
             parser.add_argument( '-R',"--repate"     ,dest = "repate"    ,required=False  , action=None )
-            parser.add_argument( '-W',"--Wireshark"  ,dest = "Wireshark" ,required=False  , action=None)
+            parser.add_argument( '-W',"--Wireshark"  ,dest = "Wireshark" ,required=False  , action='store_true')
             self.args = parser.parse_args()
             if len(sys.argv)> 1 :
                pass
@@ -96,6 +93,3 @@ class Controll :
                exit()  
 if __name__=='__main__':
      Controll()
-  
-       
-
