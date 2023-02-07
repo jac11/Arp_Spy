@@ -15,6 +15,11 @@ class Controll :
             self.arg_pares_on()
             self.start()
         def start(self): 
+               if os.geteuid() == 0 :
+                     pass
+               else:
+                    print("\n"+"="*50+"\n"+"[*] Error   -------------| run as  root or sudo privileges"+"\n"+"="*50+"\n")
+                    exit()                     
                if len(self.args.dest) == 17 and ":" in self.args.dest  and not self.args.Wireshark or\
                len(self.args.dest) == 17 and ":" in self.args.dest and  self.args.Wireshark  :
                      pass       
@@ -22,7 +27,7 @@ class Controll :
                      print('\n'+"*"*22)
                      print("[*] Attck Status\n"+'*'*22)
                      time.sleep(0.30)
-                     print("[*] Error   -----------------|->  MAC-address Error " )
+                     print("\n"+"="*50+"\n"+"[*] Error   -----------------|->  MAC-address Error "+"\n"+"="*50+"\n")
                      exit()
               
                with open ('/proc/net/arp','r') as geteway :
