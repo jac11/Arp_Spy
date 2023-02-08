@@ -10,12 +10,12 @@ class Gerp_Links :
           listBox = []
           listbrowser=[
              'google chrome','google','firefox','opera','safari','internet explorer',
-             'slimjet','duckduckgo','maxthon','slimbrowser','netscape','uc'
+             'slimjet','duckduckgo','maxthon','slimbrowser','netscape','uc','app',
             ]
           with open ("./capture/"+str(self.args.Target)+'/service','w') as service :
-               service.write('\n'+"="*30+'\n'+ "DNS and SErvice" + '\n'+'='*40+'\n')
+               service.write('\n'+"="*30+'\n'+ "     DNS and Service " + '\n'+'='*40+'\n')
           with open ("./capture/"+str(self.args.Target)+'/Roming','w') as Roming1 :
-               Roming1.write('\n'+"="*30+'\n'+ "Web_vist_list" + '\n'+'='*40+'\n')
+               Roming1.write('\n'+"="*30+'\n'+ "   Web_Visit_List   " + '\n'+'='*40+'\n')
           path= str(os.getcwd())+"/capture/"+str(self.args.Target)+'/'+str(self.args.Target)
           command = 'strings -n 10 '+path+' > '+ str(os.getcwd())+'/capture/'+str(self.args.Target)+'/data'
           os.system(command )    
@@ -36,11 +36,11 @@ class Gerp_Links :
                   or 'external' in line  or 'clients3' in line\
                   or 'fonts.' in line  : 
                      with open ("./capture/"+str(self.args.Target)+"/service",'a') as service:
-                          service_Dns = service.write('[+] '+line)
+                          service_Dns = service.write('[+] '+str(line))
                else:        
                     if 'http' in line[1:5] :
                        with open ("./capture/"+str(self.args.Target)+'/Roming','a') as Roming1:
-                           Roming = Roming.write('[+] '+line[1:])
+                           Roming = Roming1.write('[+] '+str(line[1:]))
                     elif 'https'in line[0:5]:
                        with open ("./capture/"+str(self.args.Target)+'/Roming','a') as Roming1:
                            Roming = Roming1.write('[+] '+str(line))
@@ -49,7 +49,7 @@ class Gerp_Links :
                               pass
                         else:
                              with open ("./capture/"+str(self.args.Target)+'/Roming','a') as Roming1:
-                                Roming = Roming1.write('[+] '+line)
+                                Roming = Roming1.write('[+] '+str(line))
                     else:
                          for browser in listbrowser:
                              if browser  in line:                                        

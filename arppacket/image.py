@@ -37,8 +37,7 @@ class ImagesDownLoad:
                   if '/' not in url[0]:        
                      url = url[0:]+"/"
                   else:
-                      url=url[0]
-                  print(url)
+                      url=url
                   request = requests.get(url)
                   socket.setdefaulttimeout(6) 
                   connect  = BeautifulSoup(request.text,'html.parser')
