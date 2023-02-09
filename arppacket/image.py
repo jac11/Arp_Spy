@@ -5,7 +5,7 @@ import argparse
 import socket
 import time
 
-id_user =  os.stat("./arpattack.py").st_uid 
+id_user =  os.stat("./arp_spy.py").st_uid 
 try:
   import requests
   from bs4 import BeautifulSoup    
@@ -50,7 +50,6 @@ class ImagesDownLoad:
                   for img in images:
                       try:
                          Count_images -=1
-                         print(Count_images)
                          if Count_images == 0 :
                              break
                          name = img['alt']
