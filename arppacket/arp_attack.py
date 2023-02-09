@@ -213,9 +213,9 @@ class Spoofing_arp:
                             ProcessID = ID_Number.split()
                             ProcessID = ProcessID[0]
                             os.kill(int(ProcessID), signal.SIGKILL)
-                            print("[*] closeing wireshark ...")
-                            time.sleep(1)
-                            print("[*] PCAPNG Packet Capture saved at  Capture folder ...")
+                    print("[*] closing wireshark ...")
+                    time.sleep(0.30)
+                    print("[*] PCAPNG Packet Capture saved at  Capture folder ...")
                     counted = 6 
                     from Links import Gerp_Links
                     run = Gerp_Links()

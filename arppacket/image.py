@@ -4,12 +4,15 @@ import os
 import argparse
 import socket
 import time
+
+id_user =  os.stat("./arpattack.py").st_uid 
 try:
   import requests
   from bs4 import BeautifulSoup    
 except :
-   os.system("pip install requests  /dev/nul 2>1")
-   os.system("pip install bs4  /dev/nul 2>1")
+   os.system('pip install lxml /dev/null 2>1')
+   os.system("pip install requests  /dev/null 2>1")
+   os.system("pip install bs4  /dev/null 2>1")
    import requests
    from bs4 import BeautifulSoup 
    
@@ -26,11 +29,12 @@ class ImagesDownLoad:
           self.DownLoad_Images()
            
       def read_file_url(self):      
-              self.parent_dir= os.path.abspath("./capture/"+str(self.args.Target)+"/"+"Roming")
+              self.parent_dir= os.path.abspath("./capture/"+str(self.args.Target)+"/"+"Roaming")
               with open(self.parent_dir,'r') as file_url :
-                   self.url_list = file_url.read().replace('[+] ',"https://").split()
+                   self.url_list = file_url.read().replace('http://','').replace('https://','').replace('[+] ',"https://").split()                           
       def DownLoad_Images(self):
          try:
+            Count_images = 8
             Imagepath = os.chdir("./capture/"+str(self.args.Target)+"/"+"Images/")   
             for url in self.url_list[4:] : 
                try: 
@@ -40,22 +44,29 @@ class ImagesDownLoad:
                       url=url
                   request = requests.get(url)
                   socket.setdefaulttimeout(6) 
-                  connect  = BeautifulSoup(request.text,'html.parser')
+                 # connect  = BeautifulSoup(request.text,'html.parser')
+                  connect   = BeautifulSoup(request.text, "lxml-xml")             
                   images = connect.find_all('img')
                   for img in images:
                       try:
+                         Count_images -=1
+                         print(Count_images)
+                         if Count_images == 0 :
+                             break
                          name = img['alt']
                          link = img['src']
                          with open (name +".png",'wb+') as links :
                             im = requests.get(link)
                             links.write(im.content)
-                            time.sleep(0.30)
+                            os.chown("*.* ", id_user, id_user)
+
                       except Exception as f :
                          continue 
                except requests.exceptions.ConnectionError  :
                       continue
          except Exception  :          
                 with open(str(Imagepath)+"Images.txt",'w') as file_url :
+                     os.chown(str(Imagepath)+"Images.txt", id_user, id_user)
                      print ("[+] No Images has been Capture") 
                      url_list = file_url.write("\n [+] No Images has been Capture" ) 
                      exit()
