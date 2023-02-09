@@ -10,7 +10,7 @@ import glob
 
 from subprocess import Popen, PIPE, check_output 
 
-id_user =  os.stat("./arpattack.py").st_uid 
+id_user =  os.stat("./arp_spy.py").st_uid 
 class Controll :
 
         def __init__(self):
