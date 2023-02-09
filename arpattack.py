@@ -9,6 +9,8 @@ import time
 import glob
 
 from subprocess import Popen, PIPE, check_output 
+
+id_user =  os.stat("./arpattack.py").st_uid 
 class Controll :
 
         def __init__(self):
@@ -16,7 +18,11 @@ class Controll :
             self.start()
         def start(self): 
                if os.geteuid() == 0 :
-                     pass
+                      if not os.path.exists("./capture/"):
+                         os.makedirs("./capture/")
+                         os.chown("./capture/",id_user,id_user)
+                      else:
+                         pass
                else:
                     print("\n"+"="*50+"\n"+"[*] Error   -------------| run as  root or sudo privileges"+"\n"+"="*50+"\n")
                     exit()                     
@@ -47,8 +53,7 @@ class Controll :
                else:
                     args = "-I "+self.args.Interface+" -T "+ self.args.Target +" -M " +self.args.dest 
                command_proc = ' gnome-terminal  -e ' +'"'+'./arppacket/arp_attack.py ' + args +'"'                  
-               call_termminal = subprocess.call(command_proc,shell=True,stderr=subprocess.PIPE)   
-               id_user =  os.stat("./arpattack.py").st_uid 
+               call_termminal = subprocess.call(command_proc,shell=True,stderr=subprocess.PIPE)                  
                if self.args.Wireshark  :
                   time.sleep(5)
                   if not os.path.exists("./capture/"+self.args.Target):
@@ -72,17 +77,10 @@ class Controll :
                   os.chown("./capture/"+self.args.Target, id_user, id_user)
                   os.chown("./capture/"+self.args.Target+"/"+self.args.Target, id_user, id_user)
                   os.chown("./capture/"+self.args.Target+"/"+"Images/", id_user, id_user)
-                  #try:
                   commant2 =" tshark -X lua_script:"+"1"+" -r "+"./capture/"+self.args.Target+"/"+self.args.Target+\
                   " -N n  -V -T text > "+"./capture/"+self.args.Target+"/"+self.args.Target+".txt 2>/dev/null"
                   os.system(commant2)
-                               
-                 # except FileNotFoundError :
-                     #try:
-                  os.system(commant2)
                   os.chown("./capture/"+self.args.Target+"/"+self.args.Target+".txt", id_user, id_user)
-                    # except :
-                     #   pass
         def arg_pares_on(self):
             parser = argparse.ArgumentParser( description="Usage: <OPtion> <arguments> ")          
             parser.add_argument( '-I',"--Interface"  ,dest = "Interface" ,required=True   , action=None )
