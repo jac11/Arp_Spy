@@ -4,7 +4,7 @@ import os
 import argparse
 import sys
 
-id_user =  os.stat("./arpattack.py").st_uid 
+id_user =  os.stat("./arp_spy.py").st_uid 
 class Gerp_Links :
       
       def __init__(self):
